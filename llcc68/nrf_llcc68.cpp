@@ -12,11 +12,11 @@
 using LoRa::NRF_LLCC68;
 
 NRF_LLCC68::NRF_LLCC68(const LLCC68_pins &pins,
-					   const LLCC68_config &config, 
+					   const LLCC68_config &config,
 					   std::unique_ptr<LoRa_SPI> spi,
-					   const LoRa_IO &io_config, 
-					   const Device &device)
-	: last_error{ErrorCode::NO_ERROR}, pins{pins}, config{config}, _spi{std::move(spi)}, _io{io_config}, _device{device}
+					   std::unique_ptr<LoRa_IO> io,
+					   std::unique_ptr<Device> device)
+	: last_error{ErrorCode::NO_ERROR}, pins{pins}, config{config}, _spi{std::move(spi)}, _io{std::move(io)}, _device{std::move(device)}
 {
 	if (!_spi->is_bit_order_msb_first())
 	{
@@ -59,10 +59,10 @@ void LoRa::NRF_LLCC68::send_packet(const uint8_t *packet, uint8_t size)
 
 void LoRa::NRF_LLCC68::reset()
 {
-	_io.write(pins.nreset, IO_LOW);
-	_device.delay(2); // Official demo value
-	_io.write(pins.nreset, IO_HIGH);
-	_device.delay(20); // Official demo value
+	_io->write(pins.nreset, IO_LOW);
+	_device->delay(2); // Official demo value
+	_io->write(pins.nreset, IO_HIGH);
+	_device->delay(20); // Official demo value
 }
 
 void LoRa::NRF_LLCC68::sleep(SleepConfig sleepConfig)
@@ -305,10 +305,10 @@ void LoRa::NRF_LLCC68::wait_for_irq_tx_done()
 
 	uint8_t n_timeout = 0;
 
-	while (!_io.read(pins.dio1)) // TODO: Check datasheet
+	while (!_io->read(pins.dio1)) // TODO: Check datasheet
 	{
 		n_timeout++;
-		_device.delay(1);
+		_device->delay(1);
 		if (n_timeout > 200)
 		{
 			last_error = ErrorCode::TIMED_OUT;
@@ -324,17 +324,17 @@ void LoRa::NRF_LLCC68::wait_busy(int32_t timeout)
 
 	if (timeout_enabled)
 	{
-		ts = _device.timestamp();
+		ts = _device->timestamp();
 	}
 
 	while (is_busy())
 	{
-		if (timeout_enabled && ((_device.timestamp() - ts) > timeout))
+		if (timeout_enabled && ((_device->timestamp() - ts) > timeout))
 		{
 			last_error = ErrorCode::TIMED_OUT;
 			return;
 		}
-		_device.delay(1);
+		_device->delay(1);
 	}
 }
 
@@ -345,7 +345,7 @@ bool LoRa::NRF_LLCC68::is_busy()
 
 	while (i--)
 	{
-		v += _io.read(pins.nss);
+		v += _io->read(pins.nss);
 	}
 
 	return (v >= (n / 2)) ? true : false;

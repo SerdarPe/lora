@@ -12,23 +12,16 @@
 
 namespace LoRa
 {
-	typedef void (*_delay)(int32_t ms);
-	typedef int32_t (*_timestamp)();
-	typedef int64_t (*_timestamp_64)();
-
+	/**
+	 * @brief Device specific functions.
+	 */
 	class Device
 	{
 	public:
-		Device(_delay fn_delay, _timestamp fn_ts, _timestamp_64 fn_ts_64)
-			: fn_delay{fn_delay}, fn_timestamp{fn_ts}, fn_timestamp_64{fn_ts_64} {};
-		inline void delay(int32_t ms) const { fn_delay(ms); };
-		inline int32_t timestamp(void) const { return fn_timestamp(); };
-		inline int64_t timestamp_64(void) const { return fn_timestamp_64(); };
-
-	private:
-		_delay fn_delay;
-		_timestamp fn_timestamp;
-		_timestamp_64 fn_timestamp_64;
+		virtual void delay(int32_t ms) = 0;
+		virtual int32_t timestamp(void) = 0;
+		virtual int64_t timestamp_64(void) = 0;
+		
 	};
 }
 
