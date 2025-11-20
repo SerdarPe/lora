@@ -24,7 +24,7 @@ namespace LoRa
 	class NRF_LLCC68
 	{
 	public:
-		NRF_LLCC68(const LLCC68_pins &pins, const LLCC68_config &config, std::unique_ptr<LoRa_SPI> spi, const LoRa_IO &io_config, const Device &device);
+		NRF_LLCC68(const LLCC68_pins &pins, const LLCC68_config &config, std::unique_ptr<LoRa_SPI> spi, std::unique_ptr<LoRa_IO> io, std::unique_ptr<Device> device);
 
 		NRF_LLCC68(NRF_LLCC68 &&) = default;
 		NRF_LLCC68 &operator=(NRF_LLCC68 &&) = default;
@@ -49,8 +49,8 @@ namespace LoRa
 		LLCC68_pins pins;	  // Pin definitions
 		LLCC68_config config; // Device config parameters
 		std::unique_ptr<LoRa_SPI> _spi;
-		LoRa_IO _io;
-		Device _device;
+		std::unique_ptr<LoRa_IO> _io;
+		std::unique_ptr<Device> _device;
 
 		bool init_llcc68();
 		void set_sleep(SleepConfig sleepConfig);
@@ -124,9 +124,9 @@ namespace LoRa
 		bool is_busy();
 
 		/* Set NSS pin to low */
-		void inline nss_low() { _io.write(pins.nss, IO_LOW); };
+		void inline nss_low() { _io->write(pins.nss, IO_LOW); };
 		/* Set NSS pin to high */
-		void inline nss_high() { _io.write(pins.nss, IO_HIGH); };
+		void inline nss_high() { _io->write(pins.nss, IO_HIGH); };
 	};
 }
 
