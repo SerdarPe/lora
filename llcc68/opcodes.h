@@ -67,7 +67,9 @@ namespace LoRa
 		uint8_t nss;	// chip select
 		uint8_t nreset; // reset
 		uint8_t busy;	// busy, active low
-		uint8_t dio1;	// IO_1
+		uint8_t dio1;	// DIO_1
+		uint8_t dio2;	// DIO_2
+		uint8_t dio3;	// DIO_3
 
 	} LLCC68_pins;
 
@@ -164,7 +166,7 @@ namespace LoRa
 		uint16_t cad_done : 1;
 		uint16_t cad_detected : 1;
 		uint16_t timeout : 1;
-		
+
 	} IrqStatus, IrqMask;
 
 } // namespace LoRa
