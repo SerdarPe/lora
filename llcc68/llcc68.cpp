@@ -273,7 +273,7 @@ bool LoRa::LLCC68::is_busy()
 
 	while (i--)
 	{
-		v += _io->read(pins.nss);	// TODO: Fix nss -> busy
+		v += _io->read(pins.busy);
 	}
 
 	return (v >= (n / 2)) ? true : false;
