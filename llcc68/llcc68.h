@@ -122,11 +122,6 @@ namespace LoRa
 		void wait_for_irq_tx_done(int dio_pin);
 		void wait_busy(int32_t timeout = -1);
 		bool is_busy();
-
-		/* Set NSS pin to low */
-		void inline nss_low() { _io->write(pins.nss, IO_LOW); };
-		/* Set NSS pin to high */
-		void inline nss_high() { _io->write(pins.nss, IO_HIGH); };
 	};
 }
 
