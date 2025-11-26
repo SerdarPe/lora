@@ -42,10 +42,10 @@ void LoRa::LLCC68::set_standby(LLCC68_Constants::StandbyConfig standbyConfig)
 {
 	wait_busy();
 
-	nss_low();
+	_spi->begin_transfer();
 	_spi->transfer(static_cast<uint8_t>(OPCODE::SET_STANDBY));
 	_spi->transfer(static_cast<uint8_t>(standbyConfig));
-	nss_high();
+	_spi->end_transfer();
 }
 
 uint32_t LoRa::LLCC68::calculate_rf_frequency(uint32_t desired_freq)
@@ -57,10 +57,10 @@ void LoRa::LLCC68::set_sleep(SleepConfig sleepConfig)
 {
 	wait_busy();
 
-	nss_low();
+	_spi->begin_transfer();
 	_spi->transfer(static_cast<uint8_t>(OPCODE::SET_SLEEP));
 	_spi->transfer(*reinterpret_cast<uint8_t *>(&sleepConfig));
-	nss_high();
+	_spi->end_transfer();
 }
 
 void LoRa::LLCC68::set_packet_type(LLCC68_Constants::PacketType protocol)
@@ -73,23 +73,23 @@ void LoRa::LLCC68::set_packet_type(LLCC68_Constants::PacketType protocol)
 
 	wait_busy();
 
-	nss_low();
+	_spi->begin_transfer();
 	_spi->transfer(static_cast<uint8_t>(OPCODE::SET_PACKET_TYPE));
 	_spi->transfer(static_cast<uint8_t>(protocol));
-	nss_high();
+	_spi->end_transfer();
 }
 
 void LoRa::LLCC68::set_lora_modulation_params(LLCC68_Constants::SF sf, LLCC68_Constants::BW bw, LLCC68_Constants::CR cr, LLCC68_Constants::LDRO ldOpt)
 {
 	wait_busy();
 
-	nss_low();
+	_spi->begin_transfer();
 	_spi->transfer(static_cast<uint8_t>(OPCODE::SET_MODULATION_PARAMS));
 	_spi->transfer(static_cast<uint8_t>(sf));
 	_spi->transfer(static_cast<uint8_t>(bw));
 	_spi->transfer(static_cast<uint8_t>(cr));
 	_spi->transfer(static_cast<uint8_t>(ldOpt));
-	nss_high();
+	_spi->end_transfer();
 }
 
 void LoRa::LLCC68::set_tx(int32_t timeout)
@@ -98,12 +98,12 @@ void LoRa::LLCC68::set_tx(int32_t timeout)
 
 	timeout = timeout & 0x00FFFFFF;
 
-	nss_low();
+	_spi->begin_transfer();
 	_spi->transfer(static_cast<uint8_t>(OPCODE::SET_TX));
 	_spi->transfer(static_cast<uint8_t>((timeout & 0x00FF0000) >> 16));
 	_spi->transfer(static_cast<uint8_t>((timeout & 0x0000FF00) >> 8));
 	_spi->transfer(static_cast<uint8_t>(timeout & 0x000000FF));
-	nss_high();
+	_spi->end_transfer();
 }
 
 void LoRa::LLCC68::set_rx(int32_t timeout)
@@ -112,12 +112,12 @@ void LoRa::LLCC68::set_rx(int32_t timeout)
 
 	timeout = timeout & 0x00FFFFFF;
 
-	nss_low();
+	_spi->begin_transfer();
 	_spi->transfer(static_cast<uint8_t>(OPCODE::SET_RX));
 	_spi->transfer(static_cast<uint8_t>((timeout & 0x00FF0000) >> 16));
 	_spi->transfer(static_cast<uint8_t>((timeout & 0x0000FF00) >> 8));
 	_spi->transfer(static_cast<uint8_t>(timeout & 0x000000FF));
-	nss_high();
+	_spi->end_transfer();
 }
 
 void LoRa::LLCC68::set_regulator_mode(
@@ -125,10 +125,10 @@ void LoRa::LLCC68::set_regulator_mode(
 {
 	wait_busy();
 
-	nss_low();
+	_spi->begin_transfer();
 	_spi->transfer(static_cast<uint8_t>(OPCODE::SET_REGULATOR_MODE));
 	_spi->transfer(static_cast<uint8_t>(regMode));
-	nss_high();
+	_spi->end_transfer();
 }
 
 void LoRa::LLCC68::set_pa_config(uint8_t paDutyCycle, uint8_t hpMax)
@@ -138,13 +138,13 @@ void LoRa::LLCC68::set_pa_config(uint8_t paDutyCycle, uint8_t hpMax)
 	uint8_t deviceSel = 0x00; // Reserved value
 	uint8_t paLut = 0x01;	  // Reserved value
 
-	nss_low();
+	_spi->begin_transfer();
 	_spi->transfer(static_cast<uint8_t>(OPCODE::SET_PA_CONFIG));
 	_spi->transfer(paDutyCycle);
 	_spi->transfer(hpMax);
 	_spi->transfer(deviceSel);
 	_spi->transfer(paLut);
-	nss_high();
+	_spi->end_transfer();
 }
 
 void LoRa::LLCC68::set_dio3_as_tcxo_ctrl(
@@ -157,12 +157,12 @@ void LoRa::LLCC68::set_dio3_as_tcxo_ctrl(
 
 	delay = delay & 0x00FFFFFF;
 
-	nss_low();
+	_spi->begin_transfer();
 	_spi->transfer(static_cast<uint8_t>(OPCODE::SET_DIO3_AS_TCXO_CTRL));
 	_spi->transfer(static_cast<uint8_t>((delay & 0x00FF0000) >> 16));
 	_spi->transfer(static_cast<uint8_t>((delay & 0x0000FF00) >> 8));
 	_spi->transfer(static_cast<uint8_t>(delay & 0x000000FF));
-	nss_high();
+	_spi->end_transfer();
 }
 
 void LoRa::LLCC68::set_dio2_as_rf_switch_ctrl(
@@ -170,20 +170,23 @@ void LoRa::LLCC68::set_dio2_as_rf_switch_ctrl(
 {
 	wait_busy();
 
-	nss_low();
+	_spi->begin_transfer();
 	_spi->transfer(static_cast<uint8_t>(OPCODE::SET_DIO2_AS_RF_SWITCH_CTRL));
 	_spi->transfer(static_cast<uint8_t>(enable));
-	nss_high();
+	_spi->end_transfer();
 }
 
 void LoRa::LLCC68::set_rf_frequency(uint32_t rf_freq)
 {
 	wait_busy();
 
-	nss_low();
+	_spi->begin_transfer();
 	_spi->transfer(static_cast<uint8_t>(OPCODE::SET_RF_FREQUENCY));
-	_spi->transfer(rf_freq);
-	nss_high();
+	_spi->transfer(static_cast<uint8_t>((rf_freq & 0xFF000000) >> 24));
+	_spi->transfer(static_cast<uint8_t>((rf_freq & 0x00FF0000) >> 16));
+	_spi->transfer(static_cast<uint8_t>((rf_freq & 0x0000FF00) >> 8));
+	_spi->transfer(static_cast<uint8_t>(rf_freq & 0x000000FF));
+	_spi->end_transfer();
 }
 
 void LoRa::LLCC68::set_tx_params(int8_t power_dbm,
@@ -192,11 +195,11 @@ void LoRa::LLCC68::set_tx_params(int8_t power_dbm,
 	assert((power_dbm >= -9) && (power_dbm <= 22));
 	wait_busy();
 
-	nss_low();
+	_spi->begin_transfer();
 	_spi->transfer(static_cast<uint8_t>(OPCODE::SET_TX_PARAMS));
 	_spi->transfer(power_dbm);
 	_spi->transfer(static_cast<uint8_t>(rampTime));
-	nss_high();
+	_spi->end_transfer();
 }
 
 void LoRa::LLCC68::set_lora_packet_params(
@@ -204,7 +207,7 @@ void LoRa::LLCC68::set_lora_packet_params(
 {
 	wait_busy();
 
-	nss_low();
+	_spi->begin_transfer();
 	_spi->transfer(static_cast<uint8_t>(OPCODE::SET_PACKET_PARAMS));
 	_spi->transfer(static_cast<uint8_t>((preambleLength & 0xFF00) >> 8));
 	_spi->transfer(static_cast<uint8_t>(preambleLength & 0x00FF));
@@ -212,7 +215,7 @@ void LoRa::LLCC68::set_lora_packet_params(
 	_spi->transfer(payloadLength);
 	_spi->transfer(static_cast<uint8_t>(crcType));
 	_spi->transfer(static_cast<uint8_t>(invertIq));
-	nss_high();
+	_spi->end_transfer();
 }
 
 void LoRa::LLCC68::set_buffer_base_address(uint8_t tx_base_addr,
@@ -220,11 +223,11 @@ void LoRa::LLCC68::set_buffer_base_address(uint8_t tx_base_addr,
 {
 	wait_busy();
 
-	nss_low();
+	_spi->begin_transfer();
 	_spi->transfer(static_cast<uint8_t>(OPCODE::SET_BUFFER_BASE_ADDRESS));
 	_spi->transfer(tx_base_addr);
 	_spi->transfer(rx_base_addr);
-	nss_high();
+	_spi->end_transfer();
 }
 
 void LoRa::LLCC68::wait_for_irq_tx_done(int dio_pin)
@@ -235,6 +238,7 @@ void LoRa::LLCC68::wait_for_irq_tx_done(int dio_pin)
 
 	while (!_io->read(dio_pin)) // TODO: Check datasheet
 	{
+		// IRQ mask should be checked for tx done flag
 		n_timeout++;
 		_device->delay(1);
 		if (n_timeout > 200)
@@ -288,12 +292,12 @@ void LoRa::LLCC68::write_register(uint16_t address, uint8_t *data, uint8_t n)
 
 	wait_busy();
 
-	nss_low();
+	_spi->begin_transfer();
 	_spi->transfer(static_cast<uint8_t>(OPCODE::WRITE_REGISTER));
 	_spi->transfer(static_cast<uint8_t>((address & 0xFF00) >> 8));
 	_spi->transfer(static_cast<uint8_t>((address & 0x00FF)));
 	_spi->transfer(data, n);
-	nss_high();
+	_spi->end_transfer();
 }
 
 void LoRa::LLCC68::read_register(uint16_t address, uint8_t *buffer, uint8_t n)
@@ -305,7 +309,7 @@ void LoRa::LLCC68::read_register(uint16_t address, uint8_t *buffer, uint8_t n)
 
 	wait_busy();
 
-	nss_low();
+	_spi->begin_transfer();
 	_spi->transfer(static_cast<uint8_t>(OPCODE::READ_REGISTER));
 	_spi->transfer(static_cast<uint8_t>((address & 0xFF00) >> 8));
 	_spi->transfer(static_cast<uint8_t>((address & 0x00FF)));
@@ -314,7 +318,7 @@ void LoRa::LLCC68::read_register(uint16_t address, uint8_t *buffer, uint8_t n)
 	{
 		*buffer++ = _spi->transfer(static_cast<uint8_t>(OPCODE::NOP));
 	}
-	nss_high();
+	_spi->end_transfer();
 }
 
 void LoRa::LLCC68::write_buffer(const uint8_t *data, uint8_t n, uint8_t offset)
@@ -326,11 +330,11 @@ void LoRa::LLCC68::write_buffer(const uint8_t *data, uint8_t n, uint8_t offset)
 
 	wait_busy();
 
-	nss_low();
+	_spi->begin_transfer();
 	_spi->transfer(static_cast<uint8_t>(OPCODE::WRITE_BUFFER));
 	_spi->transfer(offset);
 	_spi->transfer(data, n);
-	nss_high();
+	_spi->end_transfer();
 }
 
 void LoRa::LLCC68::read_buffer(uint8_t *buffer, uint8_t n, uint8_t offset)
@@ -342,7 +346,7 @@ void LoRa::LLCC68::read_buffer(uint8_t *buffer, uint8_t n, uint8_t offset)
 
 	wait_busy();
 
-	nss_low();
+	_spi->begin_transfer();
 	_spi->transfer(static_cast<uint8_t>(OPCODE::READ_BUFFER));
 	_spi->transfer(offset);
 	_spi->transfer(static_cast<uint8_t>(OPCODE::NOP));
@@ -350,21 +354,29 @@ void LoRa::LLCC68::read_buffer(uint8_t *buffer, uint8_t n, uint8_t offset)
 	{
 		*buffer++ = _spi->transfer(static_cast<uint8_t>(OPCODE::NOP));
 	}
-	nss_high();
+	_spi->end_transfer();
 }
 
 void LoRa::LLCC68::set_dio_irq_params(IrqMask irqMask, IrqMask dio1_mask,
 										  IrqMask dio2_mask,
 										  IrqMask dio3_mask)
 {
+	auto _irqMask = *reinterpret_cast<uint16_t *>(&irqMask);
+	auto _dio1_mask = *reinterpret_cast<uint16_t *>(&dio1_mask);
+	auto _dio2_mask = *reinterpret_cast<uint16_t *>(&dio2_mask);
+	auto _dio3_mask = *reinterpret_cast<uint16_t *>(&dio3_mask);
 	wait_busy();
 
-	nss_low();
-	_spi->transfer(*reinterpret_cast<uint16_t *>(&irqMask));
-	_spi->transfer(*reinterpret_cast<uint16_t *>(&dio1_mask));
-	_spi->transfer(*reinterpret_cast<uint16_t *>(&dio2_mask));
-	_spi->transfer(*reinterpret_cast<uint16_t *>(&dio3_mask));
-	nss_high();
+	_spi->begin_transfer();
+	_spi->transfer(static_cast<uint8_t>((_irqMask & 0xFF00) >> 8));
+	_spi->transfer(static_cast<uint8_t>((_irqMask & 0x00FF)));
+	_spi->transfer(static_cast<uint8_t>((_dio1_mask & 0xFF00) >> 8));
+	_spi->transfer(static_cast<uint8_t>((_dio1_mask & 0x00FF)));
+	_spi->transfer(static_cast<uint8_t>((_dio2_mask & 0xFF00) >> 8));
+	_spi->transfer(static_cast<uint8_t>((_dio2_mask & 0x00FF)));
+	_spi->transfer(static_cast<uint8_t>((_dio3_mask & 0xFF00) >> 8));
+	_spi->transfer(static_cast<uint8_t>((_dio3_mask & 0x00FF)));
+	_spi->end_transfer();
 }
 
 LoRa::IrqStatus LoRa::LLCC68::get_irq_status()
@@ -374,15 +386,15 @@ LoRa::IrqStatus LoRa::LLCC68::get_irq_status()
 
 	wait_busy();
 
-	nss_low();
+	_spi->begin_transfer();
 	_spi->transfer(static_cast<uint8_t>(OPCODE::GET_IRQ_STATUS));
 	_spi->transfer(static_cast<uint8_t>(OPCODE::NOP));
 	tmp = _spi->transfer(static_cast<uint8_t>(OPCODE::NOP));
-	_irq_status = _irq_status | (tmp & 0x00FF);
+	_irq_status = _irq_status | static_cast<uint16_t>(tmp);
 	_irq_status = _irq_status << 8;
 	tmp = _spi->transfer(static_cast<uint8_t>(OPCODE::NOP));
-	_irq_status = _irq_status | (tmp & 0x00FF);
-	nss_high();
+	_irq_status = _irq_status | static_cast<uint16_t>(tmp);
+	_spi->end_transfer();
 
 	return *reinterpret_cast<IrqStatus *>(&_irq_status);
 }
@@ -391,9 +403,10 @@ void LoRa::LLCC68::clear_irq_status(LLCC68_Constants::ClearIrqParam clearIrqPara
 {
 	uint16_t _clearIrqParam = *reinterpret_cast<uint16_t *>(&clearIrqParam);
 	wait_busy();
-
-	nss_low();
+	
+	_spi->begin_transfer();
 	_spi->transfer(static_cast<uint8_t>(OPCODE::CLEAR_IRQ_STATUS));
-	_spi->transfer(_clearIrqParam);
-	nss_high();
+	_spi->transfer(static_cast<uint8_t>((_clearIrqParam & 0xFF00) >> 8));
+	_spi->transfer(static_cast<uint8_t>((_clearIrqParam & 0x00FF)));
+	_spi->end_transfer();
 }
