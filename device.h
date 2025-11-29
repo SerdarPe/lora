@@ -2,7 +2,7 @@
  * @author SERDAR PEHLIVAN
  * @date 18/11/2025
  * @version 1.0
- * 
+ *
  */
 
 #ifndef __LORA_DEVICE_H__
@@ -21,7 +21,11 @@ namespace LoRa
 		virtual void delay(int32_t ms) = 0;
 		virtual int32_t timestamp(void) = 0;
 		virtual int64_t timestamp_64(void) = 0;
-		
+
+		virtual ~Device() = default;
+
+	protected:
+		Device() {};
 	};
 }
 
