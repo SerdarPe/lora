@@ -3,7 +3,6 @@
  * @date 14/11/2025
  * @version 1.0
  *
- * This library is made to be used with NiceRF LLCC68 module.
  */
 
 #ifndef __LLCC68_H__

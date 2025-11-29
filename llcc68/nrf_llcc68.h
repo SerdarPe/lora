@@ -1,3 +1,12 @@
+/**
+ * @author SERDAR PEHLIVAN
+ * @date 20/11/2025
+ * @version 1.0
+ *
+ */
+
+#ifndef __NRF_LLCC68_H__
+#define __NRF_LLCC68_H__
 
 #include "llcc68.h"
 
@@ -15,3 +24,5 @@ namespace LoRa
 		virtual bool init_llcc68() override;
 	};
 }
+
+#endif // __NRF_LLCC68_H__
