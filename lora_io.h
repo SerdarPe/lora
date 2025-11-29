@@ -2,7 +2,7 @@
  * @author SERDAR PEHLIVAN
  * @date 18/11/2025
  * @version 1.0
- * 
+ *
  */
 
 #ifndef __LORA_IO_H__
@@ -24,6 +24,10 @@ namespace LoRa
 		virtual uint8_t read(const int pin) = 0;
 		virtual void write(const int pin, const uint8_t value) = 0;
 
+		virtual ~LoRa_IO() = default;
+
+	protected:
+		LoRa_IO() {};
 	};
 }
 
