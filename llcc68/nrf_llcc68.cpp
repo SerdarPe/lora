@@ -1,3 +1,10 @@
+/**
+ * @author SERDAR PEHLIVAN
+ * @date 20/11/2025
+ * @version 1.0
+ *
+ */
+
 #include "nrf_llcc68.h"
 
 void LoRa::NRF_LLCC68::send_packet(const uint8_t *packet, uint8_t size)
