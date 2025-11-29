@@ -1,34 +1,34 @@
 #include "nrf_llcc68.h"
 
-void LoRa::NRF_LLCC68::send_packet(const uint8_t *packet, uint8_t size)
-{
-	if (size == 0)
-	{
-		return;
-	}
+LoRa::NRF_LLCC68::~NRF_LLCC68() = default;
 
-	/**
-	 * TODO:
-	 * Get device status.
-	 * Wait for RX.
-	 */
+void LoRa::NRF_LLCC68::send_packet(const uint8_t *packet, uint8_t size) {
+  if (size == 0) {
+    return;
+  }
 
-	wait_busy();
-	set_standby(LLCC68_Constants::StandbyConfig::STDBY_RC);
-	write_buffer(packet, size);
+  /**
+   * TODO:
+   * Get device status.
+   * Wait for RX.
+   */
 
-	IrqMask irqMask{1};
-	IrqMask dio1_mask{1};
-	IrqMask no_mask;
-	set_dio_irq_params(irqMask, dio1_mask, no_mask, no_mask);
+  wait_busy();
+  set_standby(LLCC68_Constants::StandbyConfig::STDBY_RC);
+  write_buffer(packet, size);
 
-	set_tx();
-	wait_for_irq_tx_done(pins.dio1);
-	// TODO: Check for device error
-	clear_irq_status(LLCC68_Constants::ClearIrqParam::TxDone);
+  IrqMask irqMask{1};
+  IrqMask dio1_mask{1};
+  IrqMask no_mask;
+  set_dio_irq_params(irqMask, dio1_mask, no_mask, no_mask);
 
-	set_rx(0x00FFFFFF); // Not sure about when to return to rx mode
-						// No IRQ set
+  set_tx();
+  wait_for_irq_tx_done(pins.dio1);
+  // TODO: Check for device error
+  clear_irq_status(LLCC68_Constants::ClearIrqParam::TxDone);
+
+  set_rx(0x00FFFFFF); // Not sure about when to return to rx mode
+                      // No IRQ set
 }
 
 bool LoRa::NRF_LLCC68::init_llcc68()

@@ -24,16 +24,6 @@ namespace LoRa
 	class LLCC68
 	{
 	public:
-		LLCC68(const LLCC68_pins &pins, const LLCC68_config &config, std::unique_ptr<LoRa_SPI> spi, std::unique_ptr<LoRa_IO> io, std::unique_ptr<Device> device);
-
-		LLCC68(LLCC68 &&) = default;
-		LLCC68 &operator=(LLCC68 &&) = default;
-
-		LLCC68(const LLCC68 &) = delete;
-		LLCC68 &operator=(const LLCC68 &) = delete;
-
-		~LLCC68();
-
 		virtual void send_packet(const uint8_t *packet, uint8_t size) = 0;
 		void reset();
 		void sleep(SleepConfig sleepConfig);
@@ -44,15 +34,19 @@ namespace LoRa
 		/* rf_freq = ((desired_freq * (2^25)) / 32) */
 		static uint32_t calculate_rf_frequency(uint32_t desired_freq);
 
+		LLCC68(LLCC68 &&) = default;
+		LLCC68 &operator=(LLCC68 &&) = default;
+
+		LLCC68(const LLCC68 &) = delete;
+		LLCC68 &operator=(const LLCC68 &) = delete;
+
+		virtual ~LLCC68() = default;
+
 	protected:
-		ErrorCode last_error;
-		LLCC68_pins pins;	  // Pin definitions
-		LLCC68_config config; // Device config parameters
-		std::unique_ptr<LoRa_SPI> _spi;
-		std::unique_ptr<LoRa_IO> _io;
-		std::unique_ptr<Device> _device;
+		LLCC68(const LLCC68_pins &pins, const LLCC68_config &config, std::unique_ptr<LoRa_SPI> spi, std::unique_ptr<LoRa_IO> io, std::unique_ptr<Device> device);
 
 		virtual bool init_llcc68() = 0;
+
 		void set_sleep(SleepConfig sleepConfig);
 		void set_standby(LLCC68_Constants::StandbyConfig standbyConfig);
 		/**
@@ -122,6 +116,13 @@ namespace LoRa
 		void wait_for_irq_tx_done(int dio_pin);
 		void wait_busy(int32_t timeout = -1);
 		bool is_busy();
+
+		ErrorCode last_error;
+		LLCC68_pins pins;	  // Pin definitions
+		LLCC68_config config; // Device config parameters
+		std::unique_ptr<LoRa_SPI> _spi;
+		std::unique_ptr<LoRa_IO> _io;
+		std::unique_ptr<Device> _device;
 	};
 }
 
